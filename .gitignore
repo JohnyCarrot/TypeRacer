@@ -1,20 +1,13 @@
-
+# --- BACKEND ---
 backend/venv/
-
-
 **/__pycache__/
 **/*.pyc
 **/*.pyo
 **/*.pyd
-
-
 *.sqlite3
-
-
 backend/.idea/
+backend/.vscode/
 .vscode/
-
-
 .DS_Store
-Thumbs.db
+
 
