@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: type_racer_backend
+    volumes:
+      - ./backend:/container_thingz_do_not_touch
+    ports:
+      - "8000:8000"
+    working_dir: /container_thingz_do_not_touch
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: type_racer_frontend
+    volumes:
+      - ./frontend:/container_thingz_do_not_touch
+    ports:
+      - "5173:5173"
+    working_dir: /container_thingz_do_not_touch
+    command: npm run dev
