@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   backend:
     build: ./backend
@@ -14,9 +12,11 @@ services:
   frontend:
     build: ./frontend
     container_name: type_racer_frontend
+    command: npm run dev
     volumes:
-      - ./frontend:/container_thingz_do_not_touch
+      - ./frontend/:/srv/app
+      - node_modules:/srv/app/node_modules
     ports:
       - "5173:5173"
-    working_dir: /container_thingz_do_not_touch
-    command: npm run dev
+volumes:
+  node_modules:

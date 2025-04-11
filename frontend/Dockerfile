@@ -1,6 +1,6 @@
 FROM node:20-slim
 
-WORKDIR /container_thingz_do_not_touch
+WORKDIR /srv/app/
 
 COPY package*.json ./
 RUN npm install --save-dev @rollup/rollup-linux-x64-gnu
