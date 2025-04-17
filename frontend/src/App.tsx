@@ -7,7 +7,7 @@ const App = () => {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
-
+            <Route path="/singleplayer" element={<Singleplayer />} />
 
             {/* 404 fallback */}
             <Route path="*" element={<div>404 - stránka neexistuje</div>} />
