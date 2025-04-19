@@ -14,4 +14,4 @@ class RandomTypeRacerTextAPIView(APIView):
             return Response({"detail": "No texts available."}, status=404)
 
         random_text = random.choice(texts)
-        return Response(random_text.content)
+        return Response({"content": random_text.content})

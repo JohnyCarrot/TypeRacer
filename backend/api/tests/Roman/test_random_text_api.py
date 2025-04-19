@@ -21,8 +21,9 @@ class RandomTextAPITest(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsInstance(response.data, str)
-        self.assertIn(response.data, self.texts)
+        self.assertIn("content", response.data)
+        self.assertIsInstance(response.data["content"], str)
+        self.assertIn(response.data["content"], self.texts)
 
     def test_random_text_api_returns_404_when_empty(self):
         TypeRacerText.objects.all().delete()

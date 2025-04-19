@@ -4,13 +4,25 @@ import CarRow from './CarRow'
 import TypingArea from './TypingArea'
 
 export default function GameScreen() {
-    const textToType = `It is not hard to make money in the market. What is hard to avoid is the alluring temptation to throw your money away on short, get-rich-quick speculative binges. It is an obvious lesson, but one frequently ignored.`
-    const totalChars = textToType.length
-
+    const [textToType, setTextToType] = useState('')
     const [typedChars, setTypedChars] = useState(0)
     const [canType, setCanType] = useState(false)
     const [startTime, setStartTime] = useState<number | null>(null)
     const [wpm, setWpm] = useState(0)
+
+    useEffect(() => {
+        // Fetch random text from Django backend
+        fetch('http://localhost:8000/texts/random/')
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to load text')
+                return res.json()
+            })
+            .then((data) => setTextToType(data.content))
+            .catch((err) => {
+                console.error(err)
+                setTextToType('Error loading text. Please try again later.')
+            })
+    }, [])
 
     useEffect(() => {
         if (canType && startTime === null) {
@@ -28,6 +40,8 @@ export default function GameScreen() {
 
         setWpm(newWpm)
     }, [typedChars, startTime])
+
+    const totalChars = textToType.length
 
     return (
         <div className="p-4 bg-white rounded shadow-md max-w-2xl mx-auto mt-10 space-y-6">
@@ -51,11 +65,15 @@ export default function GameScreen() {
                 <CarRow name="Guest" carColor="bg-blue-300" totalChars={totalChars} typedChars={0} wpm={0} />
             </div>
 
-            <TypingArea
-                canType={canType}
-                text={textToType}
-                onTyping={(typedCount) => setTypedChars(typedCount)}
-            />
+            {textToType ? (
+                <TypingArea
+                    canType={canType}
+                    text={textToType}
+                    onTyping={(typedCount) => setTypedChars(typedCount)}
+                />
+            ) : (
+                <div className="text-gray-500 italic">Loading text...</div>
+            )}
         </div>
     )
 }
