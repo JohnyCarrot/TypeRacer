@@ -10,11 +10,11 @@ export default function GameScreen() {
             </div>
 
             <div className="space-y-2">
-                <CarRow name="Guest (you)" isYou carColor="bg-blue-400" />
-                <CarRow name="Guest" carColor="bg-red-400" />
-                <CarRow name="Guest" carColor="bg-orange-400" />
-                <CarRow name="Guest" carColor="bg-green-400" />
-                <CarRow name="Guest" carColor="bg-gray-400" />
+                <CarRow name="Guest" isYou carColor="bg-blue-400" />
+                <CarRow name="RandomBotName" carColor="bg-red-400" />
+                <CarRow name="RandomBotName2" carColor="bg-orange-400" />
+                <CarRow name="RandomBotName3" carColor="bg-green-400" />
+                <CarRow name="RandomBotName4" carColor="bg-gray-400" />
             </div>
         </div>
     )
