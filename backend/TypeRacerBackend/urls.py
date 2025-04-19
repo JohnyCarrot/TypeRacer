@@ -20,4 +20,5 @@ from api import views as api_views
 
 urlpatterns = [
     path('test/', api_views.test),
+    path('texts/random/', api_views.RandomTypeRacerTextAPIView.as_view(), name='type-racer-text-random'),
 ]
