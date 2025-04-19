@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import TrafficLight from './TrafficLight'
 import CarRow from './CarRow'
 import TypingArea from './TypingArea'
+import EndScreen from './EndScreen'
 
 type Bot = {
     id: number
@@ -17,6 +18,7 @@ type BotState = {
     typed_text: string
     started_at: number | null
     wpm: number
+    finishedAt: number | null
 }
 
 export default function GameScreen() {
@@ -24,11 +26,15 @@ export default function GameScreen() {
     const [typedChars, setTypedChars] = useState(0)
     const [canType, setCanType] = useState(false)
     const [startTime, setStartTime] = useState<number | null>(null)
+    const [playerFinishedAt, setPlayerFinishedAt] = useState<number | null>(null)
     const [wpm, setWpm] = useState(0)
     const [bots, setBots] = useState<BotState[]>([])
+    const [showEndScreen, setShowEndScreen] = useState(false)
     const botColors = ['bg-pink-300', 'bg-yellow-400', 'bg-red-600', 'bg-blue-300', 'bg-green-400']
 
     const stopSignals = useRef<{ [id: number]: boolean }>({})
+
+    const totalChars = textToType.length
 
     useEffect(() => {
         fetch('http://localhost:8000/texts/random/')
@@ -54,6 +60,7 @@ export default function GameScreen() {
                     typed_text: '',
                     started_at: null,
                     wpm: 0,
+                    finishedAt: null,
                     color: botColors[loadedBots.length % botColors.length],
                 })
             }
@@ -75,7 +82,6 @@ export default function GameScreen() {
         }
 
         return () => {
-            // pri reštarte alebo unmount vyčisti boti
             Object.keys(stopSignals.current).forEach((id) => (stopSignals.current[+id] = true))
         }
     }, [canType])
@@ -87,7 +93,8 @@ export default function GameScreen() {
 
         for (const word of words) {
             if (stopSignals.current[bot.id]) break
-            const wpm = bot.base_wpm + (Math.random() - 0.5) * 10 // +- 5 wpm
+
+            const wpm = bot.base_wpm + (Math.random() - 0.5) * 10
             const timeForWord = (60 / wpm) * 1000
 
             await new Promise((res) => setTimeout(res, timeForWord))
@@ -98,6 +105,7 @@ export default function GameScreen() {
             const elapsedMinutes = (now - start) / 1000 / 60
             const charsTyped = currentText.length
             const calculatedWPM = charsTyped / 5 / elapsedMinutes
+            const isFinished = charsTyped >= textToType.length
 
             setBots((prev) =>
                 prev.map((b) =>
@@ -107,6 +115,7 @@ export default function GameScreen() {
                             typed_text: currentText,
                             started_at: start,
                             wpm: Math.floor(calculatedWPM),
+                            finishedAt: isFinished && !b.finishedAt ? now : b.finishedAt,
                         }
                         : b
                 )
@@ -115,7 +124,7 @@ export default function GameScreen() {
     }
 
     useEffect(() => {
-        if (startTime === null || typedChars === 0) return
+        if (startTime === null || typedChars === 0 || playerFinishedAt !== null) return
 
         const now = Date.now()
         const minutes = (now - startTime) / 1000 / 60
@@ -123,9 +132,43 @@ export default function GameScreen() {
         const newWpm = Math.floor(words / minutes)
 
         setWpm(newWpm)
+
+        if (typedChars >= totalChars) {
+            setPlayerFinishedAt(now)
+            setTimeout(() => setShowEndScreen(true), 1000) // delay na efekt
+        }
     }, [typedChars, startTime])
 
-    const totalChars = textToType.length
+    const getFinalResults = () => {
+        const allPlayers = [
+            {
+                name: 'You',
+                wpm: wpm,
+                finishedAt: playerFinishedAt,
+                isYou: true,
+            },
+            ...bots.map((b) => ({
+                name: b.name,
+                wpm: b.wpm,
+                finishedAt: b.finishedAt,
+                isYou: false,
+            })),
+        ]
+
+        const sorted = allPlayers
+            .filter((p) => p.finishedAt)
+            .sort((a, b) => (a.finishedAt! < b.finishedAt! ? -1 : 1))
+            .map((p, i) => ({
+                ...p,
+                position: i + 1,
+            }))
+
+        return sorted
+    }
+
+    if (showEndScreen) {
+        return <EndScreen results={getFinalResults()} />
+    }
 
     return (
         <div className="p-4 bg-white rounded shadow-md max-w-2xl mx-auto mt-10 space-y-6">
