@@ -17,7 +17,6 @@ export default function TypingArea({ canType, text, onTyping }: TypingAreaProps)
         }
     }, [canType])
 
-    // Aktuálne slovo z textu
     const remainingText = text.slice(currentIndex)
     const nextSpace = remainingText.indexOf(' ')
     const currentWord = nextSpace === -1 ? remainingText : remainingText.slice(0, nextSpace)
@@ -25,21 +24,17 @@ export default function TypingArea({ canType, text, onTyping }: TypingAreaProps)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
 
-        // Ak hráč napísal celé slovo a stlačil medzeru
         if (value.endsWith(' ')) {
             if (value.trim() === currentWord) {
-                const typedLength = currentWord.length + 1 // +1 za medzeru
+                const typedLength = currentWord.length + 1
                 const newIndex = currentIndex + typedLength
                 setCurrentIndex(newIndex)
                 setInput('')
                 onTyping(newIndex)
-            } else {
-                // zlá medzera – ignoruj alebo daj spätnú väzbu (zatiaľ nič)
             }
         } else {
             setInput(value)
 
-            // Pre živý posun autíčka aj keď ešte neukončil slovo
             let correctCount = 0
             for (let i = 0; i < value.length; i++) {
                 if (value[i] === currentWord[i]) {
