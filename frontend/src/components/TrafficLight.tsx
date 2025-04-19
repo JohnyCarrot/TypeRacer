@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
+type TrafficLightProps = {
+    onGo?: () => void
+}
 
-export default function TrafficLight() {
+export default function TrafficLight({ onGo }: TrafficLightProps) {
     const [timeLeft, setTimeLeft] = useState(10)
 
     useEffect(() => {
@@ -9,11 +12,18 @@ export default function TrafficLight() {
         return () => clearTimeout(timer)
     }, [timeLeft])
 
+    // Zavolaj onGo presne keď naskočí 0
+    useEffect(() => {
+        if (timeLeft === 0 && onGo) {
+            onGo()
+        }
+    }, [timeLeft, onGo])
+
     const getActiveLight = (): number | null => {
-        if (timeLeft > 2) return 0     // červená
-        if (timeLeft > 0) return 1     // oranžová
-        if (timeLeft === 0) return 2   // zelená
-        return 2                       // stále zelená po štarte
+        if (timeLeft > 2) return 0
+        if (timeLeft > 0) return 1
+        if (timeLeft === 0) return 2
+        return 2
     }
 
     const activeLight = getActiveLight()
@@ -22,7 +32,7 @@ export default function TrafficLight() {
         if (timeLeft > 2) return 'Príprava na štart...'
         if (timeLeft > 0) return 'Get ready!'
         if (timeLeft === 0) return '🚀 GO!'
-        return '' // po štarte nič
+        return ''
     }
 
     return (
