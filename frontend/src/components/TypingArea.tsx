@@ -10,6 +10,9 @@ export default function TypingArea({ canType, text, onTyping }: TypingAreaProps)
     const inputRef = useRef<HTMLInputElement>(null)
     const [input, setInput] = useState('')
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [completedWordIndexes, setCompletedWordIndexes] = useState<number[]>([])
+
+    const allWords = text.split(' ')
 
     useEffect(() => {
         if (canType && inputRef.current) {
@@ -17,9 +20,8 @@ export default function TypingArea({ canType, text, onTyping }: TypingAreaProps)
         }
     }, [canType])
 
-    const remainingText = text.slice(currentIndex)
-    const nextSpace = remainingText.indexOf(' ')
-    const currentWord = nextSpace === -1 ? remainingText : remainingText.slice(0, nextSpace)
+    const currentWordIndex = completedWordIndexes.length
+    const currentWord = allWords[currentWordIndex] || ''
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -30,6 +32,7 @@ export default function TypingArea({ canType, text, onTyping }: TypingAreaProps)
                 const newIndex = currentIndex + typedLength
                 setCurrentIndex(newIndex)
                 setInput('')
+                setCompletedWordIndexes([...completedWordIndexes, currentWordIndex])
                 onTyping(newIndex)
             }
         } else {
@@ -47,10 +50,25 @@ export default function TypingArea({ canType, text, onTyping }: TypingAreaProps)
         }
     }
 
+    const renderedText = allWords.map((word, index) => {
+        const isCompleted = completedWordIndexes.includes(index)
+
+        const showWord = (
+            <span
+                key={index}
+                className={isCompleted ? 'text-green-600 font-semibold' : ''}
+            >
+        {word}
+      </span>
+        )
+
+        return index < allWords.length - 1 ? [showWord, ' '] : showWord
+    })
+
     return (
         <div className="bg-blue-50 border border-blue-200 rounded p-4 mt-6 shadow-inner">
-            <div className="mb-4 text-lg leading-relaxed font-serif">
-                {text}
+            <div className="mb-4 text-lg leading-relaxed font-serif break-words">
+                {renderedText}
             </div>
 
             <input
