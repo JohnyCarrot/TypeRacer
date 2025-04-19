@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 type PlayerResult = {
     name: string
     wpm: number
@@ -13,8 +11,6 @@ type EndScreenProps = {
 }
 
 export default function EndScreen({ results }: EndScreenProps) {
-    const navigate = useNavigate()
-
     return (
         <div className="bg-white p-6 rounded shadow-md max-w-xl mx-auto mt-10 text-center">
             <h2 className="text-2xl font-bold mb-4">🏁 Výsledky pretekov</h2>

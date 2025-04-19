@@ -31,7 +31,6 @@ export default function GameScreen() {
     const [bots, setBots] = useState<BotState[]>([])
     const [showEndScreen, setShowEndScreen] = useState(false)
     const botColors = ['bg-pink-300', 'bg-yellow-400', 'bg-red-600', 'bg-blue-300', 'bg-green-400']
-
     const stopSignals = useRef<{ [id: number]: boolean }>({})
 
     const totalChars = textToType.length
@@ -124,7 +123,7 @@ export default function GameScreen() {
     }
 
     useEffect(() => {
-        if (startTime === null || typedChars === 0 || playerFinishedAt !== null) return
+        if (startTime === null || playerFinishedAt !== null) return
 
         const now = Date.now()
         const minutes = (now - startTime) / 1000 / 60
@@ -135,7 +134,7 @@ export default function GameScreen() {
 
         if (typedChars >= totalChars) {
             setPlayerFinishedAt(now)
-            setTimeout(() => setShowEndScreen(true), 1000) // delay na efekt
+            setTimeout(() => setShowEndScreen(true), 1000)
         }
     }, [typedChars, startTime])
 
@@ -155,15 +154,20 @@ export default function GameScreen() {
             })),
         ]
 
-        const sorted = allPlayers
-            .filter((p) => p.finishedAt)
-            .sort((a, b) => (a.finishedAt! < b.finishedAt! ? -1 : 1))
-            .map((p, i) => ({
-                ...p,
-                position: i + 1,
-            }))
+        const sorted = [...allPlayers].sort((a, b) => {
+            if (a.finishedAt && b.finishedAt) return a.finishedAt - b.finishedAt
+            if (a.finishedAt) return -1
+            if (b.finishedAt) return 1
+            return 0
+        })
 
-        return sorted
+        let position = 1
+        const withPositions = sorted.map((p) => ({
+            ...p,
+            position: p.finishedAt ? position++ : undefined,
+        }))
+
+        return withPositions
     }
 
     if (showEndScreen) {
