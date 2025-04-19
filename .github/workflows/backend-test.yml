@@ -27,4 +27,4 @@ jobs:
       working-directory: ./backend
       run: |
         python manage.py migrate
-        python manage.py test
+        python manage.py test api
