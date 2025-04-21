@@ -65,6 +65,7 @@ export default function GameScreen() {
                     })
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             console.warn('⚠️ Nepodarilo sa načítať botov z backendu. Používam defaultných.')
             const fallbackBots = [
