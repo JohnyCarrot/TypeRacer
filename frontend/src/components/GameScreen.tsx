@@ -47,26 +47,47 @@ export default function GameScreen() {
     const loadBots = async () => {
         const loadedBots: BotState[] = []
 
-        while (loadedBots.length < 3) {
-            const res = await fetch('http://localhost:8000/bots/random/')
-            const data: Bot = await res.json()
+        try {
+            while (loadedBots.length < 3) {
+                const res = await fetch('http://localhost:8000/bots/random/')
+                const data: Bot = await res.json()
 
-            if (!loadedBots.find((b) => b.id === data.id)) {
+                if (!loadedBots.find((b) => b.id === data.id)) {
+                    loadedBots.push({
+                        id: data.id,
+                        name: data.name,
+                        base_wpm: data.base_wpm,
+                        typed_text: '',
+                        started_at: null,
+                        wpm: 0,
+                        finishedAt: null,
+                        color: botColors[loadedBots.length % botColors.length],
+                    })
+                }
+            }
+        } catch (error) {
+            console.warn('⚠️ Nepodarilo sa načítať botov z backendu. Používam defaultných.')
+            const fallbackBots = [
+                { id: 1001, name: 'Fallback Bot 1', base_wpm: 20 },
+                { id: 1002, name: 'Fallback Bot 2', base_wpm: 25 },
+                { id: 1003, name: 'Fallback Bot 3', base_wpm: 30 },
+            ]
+
+            fallbackBots.forEach((bot, index) => {
                 loadedBots.push({
-                    id: data.id,
-                    name: data.name,
-                    base_wpm: data.base_wpm,
+                    ...bot,
                     typed_text: '',
                     started_at: null,
                     wpm: 0,
                     finishedAt: null,
-                    color: botColors[loadedBots.length % botColors.length],
+                    color: botColors[index % botColors.length],
                 })
-            }
+            })
         }
 
         setBots(loadedBots)
     }
+
 
     useEffect(() => {
         if (canType && startTime === null) {
