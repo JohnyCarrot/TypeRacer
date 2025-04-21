@@ -1,10 +1,9 @@
 import '@testing-library/jest-dom'
-import { setupServer } from 'msw/node'
-import { handlers } from './mocks/handlers'
+import { server } from './mocks/node.js'
 
-const server = setupServer(...handlers)
+beforeAll(() => server.listen())
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' })) // vypíše chybu pri nezachytenom fetche
 afterEach(() => server.resetHandlers())
+
 afterAll(() => server.close())
 
