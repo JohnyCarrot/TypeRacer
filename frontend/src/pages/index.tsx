@@ -1,7 +1,11 @@
+import Header from "../components/Header"
+import WelcomePage from "../components/WelcomePage"
+
 const Home = () => (
-    <div>
-        <h1>Vitaj na úvodnej stránke</h1>
-        <a href="/singleplayer">Prejdi do hry</a>
+    <div className="pt-10 max-w-xl mx-auto text-center">
+        <Header 
+            heading="Vitaj na úvodnej stránke"/>
+        <WelcomePage />
     </div>
 )
 
