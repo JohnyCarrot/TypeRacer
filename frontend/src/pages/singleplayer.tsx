@@ -1,12 +1,13 @@
 import GameScreen from '../components/GameScreen'
+import Header from '../components/Header'
 
 
 const Singleplayer = () => (
-    <div>
-        <h1>Singleplayer Hra</h1>
-        <a href="/">Späť na úvod</a>
-
-        <br/>
+    <div className="pt-10 max-w-xl mx-auto text-center">
+        <Header 
+            buttonText="⤺ Späť na úvod"
+            buttonDestination="/"
+            heading="Hra pre jedného hráča"/>
         <GameScreen />
     </div>
 )
