@@ -12,7 +12,7 @@ describe('EndScreen komponent', () => {
     test('zobrazí nadpis', () => {
         render(<EndScreen results={mockResults} />)
 
-        expect(screen.getByText('Výsledky pretekov')).toBeInTheDocument()
+        expect(screen.getByText('🏁 Výsledky pretekov')).toBeInTheDocument()
     })
 
     test('zobrazí všetkých hráčov', () => {
