@@ -4,6 +4,7 @@ type PlayerResult = {
     isYou?: boolean
     position?: number
     finishedAt?: number | null
+    mistakes?: string[]
 }
 
 type EndScreenProps = {
@@ -11,6 +12,8 @@ type EndScreenProps = {
 }
 
 export default function EndScreen({ results }: EndScreenProps) {
+    const yourResult = results.find(r => r.isYou)
+    const hasMistakes = yourResult?.mistakes && yourResult.mistakes.length > 0
     return (
         <div className="bg-white p-6 rounded shadow-md max-w-xl mx-auto mt-10 text-center">
             <h2 className="text-2xl font-bold mb-4">🏁 Výsledky pretekov</h2>
@@ -35,6 +38,29 @@ export default function EndScreen({ results }: EndScreenProps) {
                 })}
             </ol>
 
+            {hasMistakes && yourResult?.mistakes && (
+                <div className="mt-6 text-left pb-6">
+                    <h3 className="font-bold text-xl mb-4 text-gray-800">Tvoje chyby:</h3>
+                    <div className="border rounded-lg overflow-hidden shadow-md">
+                        <table className="w-full table-auto">
+                            <thead className="bg-blue-100">
+                                <tr>
+                                    <th className="p-3 text-left text-sm font-medium text-gray-700">Slovo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {yourResult.mistakes.map((word, index) => (
+                                    <tr key={word} className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} border-t`}>
+                                        <td className="p-3 text-sm text-gray-700">{word}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
+                
             <div className="flex justify-center gap-4">
                 <button
                     onClick={() => (window.location.href = '/')}

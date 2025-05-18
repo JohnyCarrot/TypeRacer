@@ -30,6 +30,7 @@ export default function GameScreen() {
     const [wpm, setWpm] = useState(0)
     const [bots, setBots] = useState<BotState[]>([])
     const [showEndScreen, setShowEndScreen] = useState(false)
+    const [playerMistakes, setPlayerMistakes] = useState<string[]>([])
     const botColors = ['bg-pink-300', 'bg-yellow-400', 'bg-red-600', 'bg-blue-300', 'bg-green-400']
     const stopSignals = useRef<{ [id: number]: boolean }>({})
 
@@ -167,6 +168,7 @@ export default function GameScreen() {
                 wpm: wpm,
                 finishedAt: playerFinishedAt,
                 isYou: true,
+                mistakes: playerMistakes
             },
             ...bots.map((b) => ({
                 name: b.name,
@@ -229,6 +231,9 @@ export default function GameScreen() {
                     canType={canType}
                     text={textToType}
                     onTyping={(typedCount) => setTypedChars(typedCount)}
+                    onFinish={(mistakes) => {
+                        setPlayerMistakes(mistakes)
+                    }}
                 />
             ) : (
                 <div className="text-gray-500 italic">Loading text...</div>
