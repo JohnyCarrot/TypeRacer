@@ -11,12 +11,30 @@ type EndScreenProps = {
     results: PlayerResult[]
 }
 
+function formatDuration(ms: number) {
+    const totalSeconds = Math.floor(ms / 1000)
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = totalSeconds % 60
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+}
+
 export default function EndScreen({ results }: EndScreenProps) {
     const yourResult = results.find(r => r.isYou)
     const hasMistakes = yourResult?.mistakes && yourResult.mistakes.length > 0
     return (
         <div className="bg-white p-6 rounded shadow-md max-w-xl mx-auto mt-10 text-center">
             <h2 className="text-2xl font-bold mb-4">🏁 Výsledky pretekov</h2>
+
+
+            {yourResult && (
+                <p className="text-sm text-gray-600 mb-2">
+                    ⏱️ Tvoj čas:{" "}
+                    {yourResult.finishedAt
+                        ? formatDuration(yourResult.finishedAt - (results.find(r => r.isYou)?.startedAt || 0))
+                        : "2:00"}
+                </p>
+            )}
+
 
             <ol className="space-y-2 mb-6">
                 {results.map((r) => {

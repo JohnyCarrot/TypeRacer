@@ -34,6 +34,36 @@ export default function GameScreen() {
     const botColors = ['bg-pink-300', 'bg-yellow-400', 'bg-red-600', 'bg-blue-300', 'bg-green-400']
     const stopSignals = useRef<{ [id: number]: boolean }>({})
 
+    const [remainingTime, setRemainingTime] = useState(120) 
+
+    useEffect(() => {
+        if (!canType || startTime === null) return
+    
+        const timerInterval = setInterval(() => {
+            const now = Date.now()
+            const elapsed = Math.floor((now - startTime) / 1000)
+            const timeLeft = 120 - elapsed
+    
+            setRemainingTime(timeLeft)
+    
+            
+            if (playerFinishedAt !== null) {
+                clearInterval(timerInterval)
+                return
+            }
+    
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval)
+                if (playerFinishedAt === null) {
+                    setPlayerFinishedAt(startTime + 120000)
+                    setTimeout(() => setShowEndScreen(true), 1000)
+                }
+            }
+        }, 1000)
+    
+        return () => clearInterval(timerInterval)
+    }, [canType, startTime, playerFinishedAt])
+
     const totalChars = textToType.length
 
     useEffect(() => {
@@ -168,7 +198,8 @@ export default function GameScreen() {
                 wpm: wpm,
                 finishedAt: playerFinishedAt,
                 isYou: true,
-                mistakes: playerMistakes
+                mistakes: playerMistakes,
+                startedAt: startTime
             },
             ...bots.map((b) => ({
                 name: b.name,
@@ -204,6 +235,13 @@ export default function GameScreen() {
                 <h2 className="text-xl font-bold text-gray-800">The race is about to start!</h2>
                 <TrafficLight onGo={() => setCanType(true)} />
             </div>
+
+            {canType && (
+                <div className="text-right text-sm text-gray-600">
+                    ⏱️ Time left: {Math.floor(remainingTime / 60)}:
+                    {(remainingTime % 60).toString().padStart(2, '0')}
+                </div>
+            )}
 
             <div className="space-y-2">
                 <CarRow
