@@ -245,7 +245,7 @@ export default function GameScreen() {
 
             <div className="space-y-2">
                 <CarRow
-                    name="Guest (you)"
+                    name="Guest"
                     isYou
                     carColor="bg-blue-400"
                     totalChars={totalChars}
